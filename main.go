@@ -10,6 +10,8 @@ import (
 )
 
 var homeTemplate *template.Template
+var contactsTemplate *template.Template
+var faqTemplate *template.Template
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
@@ -20,7 +22,16 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 func contactsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "<h1>Welcome to Contacts page</h1>")
+	if err := contactsTemplate.Execute(w, nil); err != nil {
+		panic(err)
+	}
+}
+
+func faqHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	if err := faqTemplate.Execute(w, nil); err != nil {
+		panic(err)
+	}
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
@@ -29,17 +40,18 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "<h1>We are sorry! No such page found :(</h1>")
 }
 
-func faqHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprint(w, "<h1>Welcome to FAQ page. You can ask your questions here</h1>")
-}
-
 func main() {
 
 	var router = mux.NewRouter()
 	var err error
 	homeTemplate, err = template.ParseFiles("views/home.gohtml")
-	if err != nil {
+	if homeTemplate, err = template.ParseFiles("views/home.gohtml"); err != nil {
+		panic(err)
+	}
+	if contactsTemplate, err = template.ParseFiles("views/contacts.gohtml"); err != nil {
+		panic(err)
+	}
+	if faqTemplate, err = template.ParseFiles("views/faq.gohtml"); err != nil {
 		panic(err)
 	}
 
